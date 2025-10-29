@@ -1,0 +1,45 @@
+services:
+  spring-boot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: runtime
+    container_name: spring-boot
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./backend:/app/backend
+      - ~/.m2:/root/.m2 # cache maven local
+    environment:
+      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
+      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
+      SPRING_DATASOURCE_PWD: ${SPRING_DATASOURCE_PWD}
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS}
+    depends_on:
+      - db
+    networks:
+      - appnet
+
+  db:
+    image: postgres:17-alpine
+    container_name: postgres-db
+    restart: always
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PWD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./etc/db:/docker-entrypoint-initdb.d:ro
+    networks:
+      - appnet
+
+volumes:
+  pgdata:
+
+networks:
+  appnet:
+    driver: bridge
