@@ -2,7 +2,7 @@ spring:
   datasource:
     url: ${SPRING_DATASOURCE_URL}
     username: ${SPRING_DATASOURCE_USERNAME:appuser}
-    password: ${SPRING_DATASOURCE_PASSWORD:apppass}
+    password: ${SPRING_DATASOURCE_PWD:apppass}
   jpa:
     hibernate:
       ddl-auto: update

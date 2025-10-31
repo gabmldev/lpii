@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class DeletedUser {
+
     private String id;
     private String email;
 }

@@ -1,16 +1,22 @@
 package com.github.gabmldev.app.config;
 
+import com.github.gabmldev.app.impl.CustomUserDetailsServiceImpl;
 import com.github.gabmldev.app.security.JwtAuthFilter;
-import java.security.AuthProvider;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -21,6 +27,15 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @EnableWebSecurity
 public class SecurityConfig {
 
+    private static final String cspFlags =
+        "default-src 'self'; script-src 'self' 'nonce-PLACEHOLDER'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:;";
+
+    @Autowired
+    private CustomUserDetailsServiceImpl userDetailsService;
+
+    @Autowired
+    private JwtAuthFilter jwtAuthFilter;
+
     @Value("${app.cors.allowed-origins}")
     private String[] allowedOrigins;
 
@@ -29,23 +44,41 @@ public class SecurityConfig {
         HttpSecurity http,
         JwtAuthFilter jwtAuthFilter
     ) throws Exception {
+        AuthenticationEntryPoint restEntryPoint = (
+            request,
+            response,
+            authException
+        ) -> {
+            response.setContentType("application/json");
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write("{\"error\":\"Unauthorized\"}");
+        };
+
         http
-            .csrf(csrf -> csrf.disable()) // desactivar CSRF para API REST
+            .headers(h ->
+                h
+                    .frameOptions(HeadersConfigurer.FrameOptionsConfig::deny)
+                    .xssProtection(x -> x.disable())
+            )
+            .csrf(AbstractHttpConfigurer::disable) // desactivar CSRF para API REST
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+            .exceptionHandling(e -> e.authenticationEntryPoint(restEntryPoint))
             .passwordManagement(m -> m.changePasswordPage("/auth/restore-pwd"))
+            .addFilterBefore(
+                jwtAuthFilter,
+                UsernamePasswordAuthenticationFilter.class
+            )
             .authorizeHttpRequests(
                 auth ->
                     auth
                         .requestMatchers("/api/**")
                         .permitAll() // permitir todas las API
+                        .requestMatchers("/workflow/**")
+                        .authenticated()
                         .anyRequest()
                         .permitAll() // permitir recursos estáticos
             )
-            .addFilterBefore(
-                jwtAuthFilter,
-                UsernamePasswordAuthenticationFilter.class
-            )
-            .authenticationProvider();
+            .authenticationProvider(authenticationProvider());
         return http.build();
     }
 
@@ -67,13 +100,14 @@ public class SecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(18);
+        return new BCryptPasswordEncoder(14);
     }
 
     @Bean
     public AuthenticationProvider authenticationProvider() {
-        AuthProvider provider = new AuthProvider();
-        provider.setUserDetailsService(userDetailsService);
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider(
+            userDetailsService
+        );
         provider.setPasswordEncoder(passwordEncoder());
         return provider;
     }

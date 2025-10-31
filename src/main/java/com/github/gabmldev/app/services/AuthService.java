@@ -1,6 +1,5 @@
 package com.github.gabmldev.app.services;
 
-
 public interface AuthService {
     public String getToken();
     public void login();

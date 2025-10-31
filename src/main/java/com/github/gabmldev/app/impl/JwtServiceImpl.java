@@ -1,18 +1,25 @@
 package com.github.gabmldev.app.impl;
 
-import com.github.gabmldev.app.services.JwtService;
-import io.jsonwebtoken.*;
-import org.springframework.stereotype.Service;
-
-import javax.crypto.SecretKey;
 import java.util.Date;
 import java.util.Map;
 import java.util.UUID;
 
+import javax.crypto.SecretKey;
+
+import org.springframework.stereotype.Service;
+
+import com.github.gabmldev.app.services.JwtService;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.Jwts;
+
 @Service
 public class JwtServiceImpl implements JwtService {
-    private static final String issuer = "lpii-server";
-    private static final long EXPIRATION = 1000 * 60 * 60;
+
+    private static final String ISSUER = "lpii-server";
+    private static final long EXPIRATION = (long) 1000 * 120;
 
     private final SecretKey key = Jwts.SIG.HS256.key().build();
 
@@ -23,8 +30,10 @@ public class JwtServiceImpl implements JwtService {
         String jti = UUID.randomUUID().toString();
 
         return Jwts.builder()
-                .header().keyId("mainKey").and()
-                .issuer(issuer)
+                .header()
+                .keyId("mainKey")
+                .and()
+                .issuer(ISSUER)
                 .issuedAt(now)
                 .expiration(expiry)
                 .subject(subject)
@@ -32,7 +41,6 @@ public class JwtServiceImpl implements JwtService {
                 .signWith(key)
                 .id(jti)
                 .compact();
-
     }
 
     @Override
