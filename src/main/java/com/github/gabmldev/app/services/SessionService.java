@@ -1,15 +1,28 @@
 package com.github.gabmldev.app.services;
 
 import com.github.gabmldev.app.entity.Session;
+import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Optional;
 
 public interface SessionService {
     public Optional<Map<String, Session>> findAllSessions(String userId);
     public Optional<Session> findSession(String userId, String jti);
-    public void verifySession();
-    public void deleteSession();
-    public void updateSession();
-    public void saveSession();
-    public void createSession();
+    public Session getCurrentSession(String userId);
+    public boolean verifySession(String userId, String jti);
+    public void deleteSession(String userId, String jti);
+    public void deleteExpiredSession(String userId);
+    public void updateSession(
+        String userId,
+        String tjti,
+        String token,
+        LocalDateTime eat
+    );
+    public void saveSession(
+        String jti,
+        String token,
+        String userId,
+        LocalDateTime cat,
+        LocalDateTime eat
+    );
 }
