@@ -5,46 +5,29 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface SessionRepository extends JpaRepository<Session, String> {
-    @Query(name = "Session.findSession", nativeQuery = true)
-    Optional<Session> findSession(
-        @Param("uid") String userId,
-        @Param("jti") String jti
-    );
+    Optional<Session> findByUserIdAndJti(String userId, String jti);
 
-    @Query(name = "Session.findByUserId", nativeQuery = true)
-    Session findByUserId(
-            @Param("uid") String userId
-    );
+    Session findByUserId(String userId);
 
-    @Query(name = "Session.findAllSessions", nativeQuery = true)
-    Optional<List<Session>> findAllSessions(@Param("uid") String userId);
+    Optional<List<Session>> findAllByUserId(String userId);
 
-    @Query(name = "Session.deleteSession", nativeQuery = true)
+    @Modifying
+    @Query("DELETE FROM Session s WHERE s.user_id = :uid AND s.jti = :jti")
     void deleteSession(@Param("uid") String userId, @Param("jti") String jti);
 
-    @Query(name = "Session.deleteExpiredSessions", nativeQuery = true)
-    void deleteExpiredSession(@Param("uid") String userId);
-
-    @Query(name = "Session.updateSession", nativeQuery = true)
-    void updateSession(
+    @Modifying
+    @Query(
+        "DELETE FROM Session s WHERE s.user_id = :uid AND s.expiresAt < :now"
+    )
+    void deleteExpiredSessions(
         @Param("uid") String userId,
-        @Param("jti") String jti,
-        @Param("t") String token,
-        @Param("expires_at") LocalDateTime eat
-    );
-
-    @Query(name = "Session.createSession", nativeQuery = true)
-    void saveSession(
-        @Param("jti") String jti,
-        @Param("t") String token,
-        @Param("uid") String userId,
-        @Param("created_at") LocalDateTime cat,
-        @Param("expires_at") LocalDateTime eat
+        @Param("now") LocalDateTime now
     );
 }

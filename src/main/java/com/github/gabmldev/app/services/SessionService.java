@@ -11,18 +11,13 @@ public interface SessionService {
     public Session getCurrentSession(String userId);
     public boolean verifySession(String userId, String jti);
     public void deleteSession(String userId, String jti);
-    public void deleteExpiredSession(String userId);
-    public void updateSession(
+    public void deleteExpiredSessions(String userId);
+    public void saveSession(Session session);
+    public void createSession(
         String userId,
-        String tjti,
-        String token,
-        LocalDateTime eat
-    );
-    public void saveSession(
         String jti,
         String token,
-        String userId,
-        LocalDateTime cat,
-        LocalDateTime eat
+        LocalDateTime createdAt,
+        LocalDateTime expiresAt
     );
 }

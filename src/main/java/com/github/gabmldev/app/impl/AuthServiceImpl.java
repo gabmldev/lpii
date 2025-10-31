@@ -7,9 +7,7 @@ import com.github.gabmldev.app.repository.AuthRepository;
 import com.github.gabmldev.app.repository.RoleRepository;
 import com.github.gabmldev.app.services.AuthService;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -17,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -47,7 +46,9 @@ public class AuthServiceImpl implements AuthService {
         Authentication authentication = authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(username, pwd)
         );
-        User user = authRepository.findByName(username);
+        User user = authRepository.findByUsername(username).orElseThrow(() ->
+                new UsernameNotFoundException("User not found: " + username)
+        );
         UserClaims claims = new UserClaims();
 
         LocalDateTime cat = LocalDateTime.now();
@@ -56,20 +57,18 @@ public class AuthServiceImpl implements AuthService {
         claims.setId(user.getId());
         claims.setUsername(user.getUsername());
         claims.setEmail(user.getEmail());
-        claims.setRole(roleRepository.findRoleNameById(user.getRole().toString()));
+        claims.setRole(roleRepository.findNameById(user.getRole().toString()));
         claims.setCreatedAt(cat);
         claims.setExpiresAt(expiry);
 
         Map<String, Object> customClaims = new HashMap<>();
         customClaims.put("data", claims);
 
-        String[] roles = roleRepository.findAllNames();
-
         String token = jwtService.generateToken(username, customClaims);
 
         String jti = jwtService.extractJti(token);
 
-        sessionService.saveSession(jti, token, user.getId(), cat, expiry);
+        sessionService.createSession(user.getId(), jti, token, cat, expiry);
         return token;
     }
 

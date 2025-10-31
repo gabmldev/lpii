@@ -3,7 +3,6 @@ package com.github.gabmldev.app.impl;
 import com.github.gabmldev.app.entity.User;
 import com.github.gabmldev.app.repository.AuthRepository;
 import com.github.gabmldev.app.repository.RoleRepository;
-import java.util.Objects;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -22,20 +21,20 @@ public class CustomUserDetailsServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username)
         throws UsernameNotFoundException {
-        User u = authRepository.findByName(username);
-        String[] roles = roleRepository.findAllNames();
-
-        if (Objects.isNull(u)) throw new UsernameNotFoundException(
-            "User not found: " + username
-        );
+        User user = authRepository
+            .findByUsername(username)
+            .orElseThrow(() ->
+                new UsernameNotFoundException("User not found: " + username)
+            );
+        String role = roleRepository.findNameById(user.getRole().getId());
 
         // convierte tu entidad User a
         // org.springframework.security.core.userdetails.User
         return org.springframework.security.core.userdetails.User.withUsername(
-            u.getUsername()
+            user.getUsername()
         )
-            .password(u.getPwd()) // ya debe ser bcrypt
-            .authorities(roles)
+            .password(user.getPwd()) // ya debe ser bcrypt
+            .authorities(role)
             .accountExpired(false)
             .accountLocked(false)
             .credentialsExpired(false)
