@@ -1,6 +1,6 @@
-package com.github.gabmldev.app.impl;
+package com.github.gabmldev.app.services.impl;
 
-import com.github.gabmldev.app.entity.UserClaims;
+import com.github.gabmldev.app.utils.UserClaims;
 import com.github.gabmldev.app.services.JwtService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;

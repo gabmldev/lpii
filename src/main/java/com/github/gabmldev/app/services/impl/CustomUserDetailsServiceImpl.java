@@ -1,4 +1,4 @@
-package com.github.gabmldev.app.impl;
+package com.github.gabmldev.app.services.impl;
 
 import com.github.gabmldev.app.entity.User;
 import com.github.gabmldev.app.repository.AuthRepository;

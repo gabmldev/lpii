@@ -1,4 +1,4 @@
-package com.github.gabmldev.app.impl;
+package com.github.gabmldev.app.services.impl;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 
 import com.github.gabmldev.app.entity.Session;
 import com.github.gabmldev.app.entity.User;
-import com.github.gabmldev.app.entity.UserClaims;
+import com.github.gabmldev.app.utils.UserClaims;
 import com.github.gabmldev.app.repository.AuthRepository;
 import com.github.gabmldev.app.repository.RoleRepository;
 import com.github.gabmldev.app.services.AuthService;

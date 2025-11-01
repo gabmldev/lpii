@@ -1,6 +1,6 @@
 package com.github.gabmldev.app.services;
 
-import com.github.gabmldev.app.entity.UserClaims;
+import com.github.gabmldev.app.utils.UserClaims;
 import java.util.Map;
 
 public interface JwtService {

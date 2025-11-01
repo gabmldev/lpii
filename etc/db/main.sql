@@ -20,8 +20,8 @@ CREATE TABLE users (
         ON UPDATE CASCADE
 );
 
-CREATE UNIQUE INDEX uq_users_username;
-CREATE UNIQUE INDEX uq_users_email;
+CREATE UNIQUE INDEX uq_users_username
+CREATE UNIQUE INDEX uq_users_email
 
 CREATE TABLE session (
     id         uuid            PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -35,7 +35,7 @@ CREATE TABLE session (
         FOREIGN KEY (user_id)
         REFERENCES users (id)
         ON DELETE CASCADE                -- delete sessions when a user is removed
-        ON UPDATE CASCADE
+        ON UPDATE CASCADE;
 );
 
 CREATE INDEX idx_session_user_jti ON session(user_id, tjti);

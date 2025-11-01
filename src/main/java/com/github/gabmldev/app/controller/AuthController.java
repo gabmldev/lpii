@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.github.gabmldev.app.entity.User;
-import com.github.gabmldev.app.impl.AuthServiceImpl;
+import com.github.gabmldev.app.services.impl.AuthServiceImpl;
 
 @RestController
 @RequestMapping("/api/auth")

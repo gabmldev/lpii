@@ -9,10 +9,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.github.gabmldev.app.entity.UserClaims;
-import com.github.gabmldev.app.impl.CustomUserDetailsServiceImpl;
-import com.github.gabmldev.app.impl.JwtServiceImpl;
-import com.github.gabmldev.app.impl.SessionServiceImpl;
+import com.github.gabmldev.app.utils.UserClaims;
+import com.github.gabmldev.app.services.impl.CustomUserDetailsServiceImpl;
+import com.github.gabmldev.app.services.impl.JwtServiceImpl;
+import com.github.gabmldev.app.services.impl.SessionServiceImpl;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

@@ -21,7 +21,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import com.github.gabmldev.app.impl.CustomUserDetailsServiceImpl;
+import com.github.gabmldev.app.services.impl.CustomUserDetailsServiceImpl;
 import com.github.gabmldev.app.security.JwtAuthFilter;
 
 import jakarta.servlet.http.HttpServletResponse;

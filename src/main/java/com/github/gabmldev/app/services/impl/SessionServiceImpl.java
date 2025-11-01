@@ -1,4 +1,4 @@
-package com.github.gabmldev.app.impl;
+package com.github.gabmldev.app.services.impl;
 
 import java.time.LocalDateTime;
 import java.util.List;

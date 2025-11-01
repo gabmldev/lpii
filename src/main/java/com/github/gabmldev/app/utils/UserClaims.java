@@ -1,4 +1,4 @@
-package com.github.gabmldev.app.entity;
+package com.github.gabmldev.app.utils;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
