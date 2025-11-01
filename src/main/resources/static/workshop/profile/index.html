@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/alpinejs@3.15.1/dist/cdn.min.js"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.8/dist/htmx.min.js"
+      integrity="sha384-/TgkGk7p307TH7EXJDuUlgG3Ce1UVolAOFopFekQkkXihi5u/6OCvVKyz1W+idaz"
+      crossorigin="anonymous"
+    ></script>
+    <title hx-swap-oob="true">Workshop - Profile</title>
+  </head>
+  <body>
+    <main class="relative">
+      <div class="container md:mx-auto py-4 px-2 md:px-0">
+        <section
+          id="profile"
+          class="h-96 rounded-xl bg-gray-300 shadow-lg"
+          x-data="{ profile: {} }"
+        >
+          <!--x-init="
+            const username = window.location.pathname.split('/').pop();
+            profile = await (await fetch(`/api/profile/${username}`)).json()
+          "-->
+          <template x-if="profile.user"></template>
+          <template x-if="!profile.user">
+            <div>
+              <div class="flex flex-row flex-nowrap pt-4 px-8 gap-2">
+                <img
+                  class="size-32 aspect-ratio rounded-full"
+                  src="../../assets/img/Go8finuWoAAdBci.jpg"
+                  alt=""
+                />
+                <div class="flex flex-col justify-center">
+                  <h1 class="text-2xl">Usuario desconocido</h1>
+                  <ul class="mt-1.5">
+                    <li>
+                      <p class="text-xs opacity-80">Role: <b>Desconocido</b></p>
+                    </li>
+                    <li>
+                      <p class="text-xs opacity-80">
+                        Se unio hace: <b>Desconocido</b>
+                      </p>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+              <div
+                class="w-full h-[1px] bg-neutral-500/60 mt-2"
+                aria-hidden="true"
+              ></div>
+            </div>
+          </template>
+          <script>
+            const handleShowProfileSection = (id) => {};
+          </script>
+          <article
+            x-data="{ profileSections: [{ id: 1, title: 'Compras Recientes', isActive: true }, { id: 2, title: 'Destacados', isActive: false}] }"
+            class="w-full p-8"
+          >
+            <template x-for="ps in profileSections" :key="ps.id">
+              <div class="flex flex-col flex-nowrap">
+                <div
+                  class="flex flex-row flex-nowrap justify-between border-b py-2"
+                >
+                  <h3 class="text-lg font-medium" x-text="ps.title"></h3>
+                  <svg
+                    class="size-6"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 256 256"
+                  >
+                    <rect width="256" height="256" fill="none" />
+                    <polyline
+                      points="208 96 128 176 48 96"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="16"
+                    />
+                  </svg>
+                </div>
+                <div></div>
+              </div>
+            </template>
+          </article>
+          <button
+            type="button"
+            class="block text-center mx-auto rounded-xl bg-gray-300 hover:bg-gray-400 py-2 px-4 transition-all ease-in-out duration-300 cursor-pointer"
+            x-on:click
+          >
+            Cargar de nuevo
+          </button>
+        </section>
+      </div>
+    </main>
+  </body>
+</html>

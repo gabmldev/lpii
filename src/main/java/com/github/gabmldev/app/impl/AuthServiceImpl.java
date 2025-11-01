@@ -1,22 +1,24 @@
 package com.github.gabmldev.app.impl;
 
-import com.github.gabmldev.app.entity.Session;
-import com.github.gabmldev.app.entity.User;
-import com.github.gabmldev.app.entity.UserClaims;
-import com.github.gabmldev.app.repository.AuthRepository;
-import com.github.gabmldev.app.repository.RoleRepository;
-import com.github.gabmldev.app.services.AuthService;
-
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+
+import com.github.gabmldev.app.entity.Session;
+import com.github.gabmldev.app.entity.User;
+import com.github.gabmldev.app.entity.UserClaims;
+import com.github.gabmldev.app.repository.AuthRepository;
+import com.github.gabmldev.app.repository.RoleRepository;
+import com.github.gabmldev.app.services.AuthService;
 
 @Service
 public class AuthServiceImpl implements AuthService {
@@ -37,18 +39,16 @@ public class AuthServiceImpl implements AuthService {
     private RoleRepository roleRepository;
 
     @Override
-    public String getToken(String userId) {
+    public String getToken(UUID userId) {
         return sessionService.getCurrentSession(userId).getToken();
     }
 
     @Override
     public String login(String username, String pwd) {
         Authentication authentication = authenticationManager.authenticate(
-            new UsernamePasswordAuthenticationToken(username, pwd)
-        );
-        User user = authRepository.findByUsername(username).orElseThrow(() ->
-                new UsernameNotFoundException("User not found: " + username)
-        );
+                new UsernamePasswordAuthenticationToken(username, pwd));
+        User user = authRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
         UserClaims claims = new UserClaims();
 
         LocalDateTime cat = LocalDateTime.now();
@@ -57,7 +57,7 @@ public class AuthServiceImpl implements AuthService {
         claims.setId(user.getId());
         claims.setUsername(user.getUsername());
         claims.setEmail(user.getEmail());
-        claims.setRole(roleRepository.findNameById(user.getRole().toString()));
+        claims.setRole(roleRepository.findNameById(user.getRole().getId()));
         claims.setCreatedAt(cat);
         claims.setExpiresAt(expiry);
 
@@ -77,20 +77,20 @@ public class AuthServiceImpl implements AuthService {
         UserClaims userClaims = jwtService.extractUserClaims(token);
         String jti = jwtService.extractJti(token);
         Optional<Session> optSession = sessionService.findSession(
-            userClaims.getId(),
-            jti
-        );
-        optSession.ifPresent(session ->
-            sessionService.deleteSession(userClaims.getId(), jti)
-        );
+                userClaims.getId(),
+                jti);
+        optSession.ifPresent(session -> sessionService.deleteSession(userClaims.getId(), jti));
     }
 
     @Override
-    public void signUp() {}
+    public void signUp() {
+    }
 
     @Override
-    public void restorePwd() {}
+    public void restorePwd() {
+    }
 
     @Override
-    public void deleteUser() {}
+    public void deleteUser() {
+    }
 }

@@ -1,14 +1,7 @@
 package com.github.gabmldev.app.security;
 
-import com.github.gabmldev.app.entity.UserClaims;
-import com.github.gabmldev.app.impl.CustomUserDetailsServiceImpl;
-import com.github.gabmldev.app.impl.JwtServiceImpl;
-import com.github.gabmldev.app.impl.SessionServiceImpl;
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -16,29 +9,31 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.github.gabmldev.app.entity.UserClaims;
+import com.github.gabmldev.app.impl.CustomUserDetailsServiceImpl;
+import com.github.gabmldev.app.impl.JwtServiceImpl;
+import com.github.gabmldev.app.impl.SessionServiceImpl;
+
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
 
     @Autowired
     private SessionServiceImpl sessionService;
-
-    private final CustomUserDetailsServiceImpl userDetailsService;
-    private final JwtServiceImpl jwtService;
-
-    public JwtAuthFilter(
-        JwtServiceImpl jwtService,
-        CustomUserDetailsServiceImpl userDetailsService
-    ) {
-        this.jwtService = jwtService;
-        this.userDetailsService = userDetailsService;
-    }
+    @Autowired
+    private CustomUserDetailsServiceImpl userDetailsService;
+    @Autowired
+    private JwtServiceImpl jwtService;
 
     @Override
     protected void doFilterInternal(
-        HttpServletRequest request,
-        HttpServletResponse response,
-        FilterChain filterChain
-    ) throws ServletException, IOException {
+            HttpServletRequest request,
+            HttpServletResponse response,
+            FilterChain filterChain) throws ServletException, IOException {
         final String authHeader = request.getHeader("Authorization");
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
@@ -62,19 +57,14 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 return;
             }
 
-            if (
-                username != null &&
-                SecurityContextHolder.getContext().getAuthentication() == null
-            ) {
+            if (username != null &&
+                    SecurityContextHolder.getContext().getAuthentication() == null) {
                 UserDetails userDetails = userDetailsService.loadUserByUsername(
-                    username
-                );
-                UsernamePasswordAuthenticationToken authToken =
-                    new UsernamePasswordAuthenticationToken(
+                        username);
+                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                         userDetails,
                         null,
-                        userDetails.getAuthorities()
-                    );
+                        userDetails.getAuthorities());
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
         }

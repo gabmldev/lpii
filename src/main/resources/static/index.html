@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/alpinejs@3.15.1/dist/cdn.min.js"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.8/dist/htmx.min.js"
+      integrity="sha384-/TgkGk7p307TH7EXJDuUlgG3Ce1UVolAOFopFekQkkXihi5u/6OCvVKyz1W+idaz"
+      crossorigin="anonymous"
+    ></script>
+    <link
+      rel="shortcut icon"
+      href="./assets/bounding-box.svg"
+      type="image/svg+xml"
+    />
+    <title>Home page</title>
+  </head>
+  <body>
+    <main class="relative">
+      <header class="container md:mx-auto py-4 px-2 md:px-0">
+        <section class="flex flex-row flex-nowrap justify-between">
+          <div class="flex flex-row flex-nowrap items-center gap-2">
+            <!-- GUG Icon -->
+            <div class="relative">
+              <svg
+                class="size-8"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 256 256"
+              >
+                <rect width="256" height="256" fill="none" />
+                <rect
+                  x="168"
+                  y="40"
+                  width="48"
+                  height="48"
+                  rx="8"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="16"
+                />
+                <rect
+                  x="40"
+                  y="40"
+                  width="48"
+                  height="48"
+                  rx="8"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="16"
+                />
+                <rect
+                  x="168"
+                  y="168"
+                  width="48"
+                  height="48"
+                  rx="8"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="16"
+                />
+                <rect
+                  x="40"
+                  y="168"
+                  width="48"
+                  height="48"
+                  rx="8"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="16"
+                />
+                <line
+                  x1="64"
+                  y1="168"
+                  x2="64"
+                  y2="88"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="16"
+                />
+                <line
+                  x1="168"
+                  y1="192"
+                  x2="88"
+                  y2="192"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="16"
+                />
+                <line
+                  x1="192"
+                  y1="88"
+                  x2="192"
+                  y2="168"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="16"
+                />
+                <line
+                  x1="88"
+                  y1="64"
+                  x2="168"
+                  y2="64"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="16"
+                />
+              </svg>
+            </div>
+            <h2 class="text-2xl font-medium">GUG</h2>
+          </div>
+          <div class="relative flex flex-row flex-nowrap gap-2.5">
+            <!-- AUTH BUTTONS -->
+            <div class="relative grid grid-cols-2 gap-4" aria-hidden="false">
+              <a class="relative" href="/auth/login" target="_self">
+                <button
+                  class="w-32 rounded-lg flex flex-row flex-nowrap justify-between border py-1 px-4 gap-2"
+                >
+                  <svg
+                    class="size-6"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 256 256"
+                  >
+                    <rect width="256" height="256" fill="none" />
+                    <circle
+                      cx="108"
+                      cy="100"
+                      r="60"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="16"
+                    />
+                    <path
+                      d="M24,200c20.55-24.45,49.56-40,84-40s63.45,15.55,84,40"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="16"
+                    />
+                    <polyline
+                      points="200 144 216 160 248 128"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="16"
+                    />
+                  </svg>
+                  Login
+                </button>
+              </a>
+              <a class="relative" href="/auth/sign-up" target="_self">
+                <button
+                  class="w-32 rounded-lg flex flex-row flex-nowrap justify-between border py-1 px-4 gap-2"
+                >
+                  <svg
+                    class="size-6"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 256 256"
+                  >
+                    <rect width="256" height="256" fill="none" />
+                    <line
+                      x1="200"
+                      y1="136"
+                      x2="248"
+                      y2="136"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="16"
+                    />
+                    <line
+                      x1="224"
+                      y1="112"
+                      x2="224"
+                      y2="160"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="16"
+                    />
+                    <circle
+                      cx="108"
+                      cy="100"
+                      r="60"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="16"
+                    />
+                    <path
+                      d="M24,200c20.55-24.45,49.56-40,84-40s63.45,15.55,84,40"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="16"
+                    />
+                  </svg>
+                  Sign up
+                </button>
+              </a>
+            </div>
+          </div>
+        </section>
+      </header>
+      <div
+        class="grid xl:grid-cols-8 lg:grid-cols-4 md:grid-cols-2 grid-cols-1 container mx-auto py-4"
+      >
+        <div class="col-span-3 py-4">
+          <h1 class="text-4xl mb-4">Welcome to LPII</h1>
+          <p class="text-sm mb-2">
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolores
+            accusantium voluptas officiis quibusdam perferendis corrupti quaerat
+            explicabo iure.
+          </p>
+          <p class="text-sm mb-2">
+            Lorem ipsum dolor sit amet consectetur adipisicing elit.
+          </p>
+          <div class="grid grid-cols-2 gap-4">
+            <a
+              class="text-center rounded-xl bg-gray-300 py-2 px-4 cursor-pointer"
+              href="/auth/login"
+              target="_self"
+            >
+              Iniciar Seccion
+            </a>
+            <a
+              class="text-center rounded-xl bg-gray-200 py-2 px-4 cursor-pointer"
+              href="/auth/sign-up"
+              target="_self"
+            >
+              Crear una cuenta
+            </a>
+          </div>
+        </div>
+        <div class="col-span-1" aria-hidden="true"></div>
+        <div class="col-span-1" aria-hidden="true"></div>
+        <div class="col-span-3 h-96 p-4">
+          <figure class="relative">
+            <img
+              class="min-w-full h-82 rounded-xl aspect-ratio"
+              src="./assets/img/pexels-pixabay-264636.jpg"
+              alt="Grocery Store"
+              fetchpriority="high"
+              loading="eager"
+              decoding="async"
+            />
+            <figcaption class="text-xs mt-2">
+              Source:
+              <a
+                class="underline font-bold"
+                href="https://www.pexels.com/photo/grocery-store-264636/"
+                target="_blank"
+                rel="noreferrer noopener"
+                >@pixabay</a
+              >
+            </figcaption>
+          </figure>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>

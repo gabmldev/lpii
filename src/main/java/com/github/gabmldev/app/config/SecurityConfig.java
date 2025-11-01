@@ -1,9 +1,7 @@
 package com.github.gabmldev.app.config;
 
-import com.github.gabmldev.app.impl.CustomUserDetailsServiceImpl;
-import com.github.gabmldev.app.security.JwtAuthFilter;
-import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -23,12 +21,16 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import com.github.gabmldev.app.impl.CustomUserDetailsServiceImpl;
+import com.github.gabmldev.app.security.JwtAuthFilter;
+
+import jakarta.servlet.http.HttpServletResponse;
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
-    private static final String cspFlags =
-        "default-src 'self'; script-src 'self' 'nonce-PLACEHOLDER'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:;";
+    private static final String cspFlags = "default-src 'self'; script-src 'self' 'nonce-PLACEHOLDER'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:;";
 
     @Autowired
     private CustomUserDetailsServiceImpl userDetailsService;
@@ -41,44 +43,38 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(
-        HttpSecurity http,
-        JwtAuthFilter jwtAuthFilter
-    ) throws Exception {
+            HttpSecurity http,
+            JwtAuthFilter jwtAuthFilter) throws Exception {
         AuthenticationEntryPoint restEntryPoint = (
-            request,
-            response,
-            authException
-        ) -> {
+                request,
+                response,
+                authException) -> {
             response.setContentType("application/json");
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.getWriter().write("{\"error\":\"Unauthorized\"}");
         };
 
         http
-            .headers(h ->
-                h
-                    .frameOptions(HeadersConfigurer.FrameOptionsConfig::deny)
-                    .xssProtection(x -> x.disable())
-            )
-            .csrf(AbstractHttpConfigurer::disable) // desactivar CSRF para API REST
-            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-            .exceptionHandling(e -> e.authenticationEntryPoint(restEntryPoint))
-            .passwordManagement(m -> m.changePasswordPage("/auth/restore-pwd"))
-            .addFilterBefore(
-                jwtAuthFilter,
-                UsernamePasswordAuthenticationFilter.class
-            )
-            .authorizeHttpRequests(
-                auth ->
-                    auth
-                        .requestMatchers("/api/**")
-                        .permitAll() // permitir todas las API
-                        .requestMatchers("/workflow/**")
-                        .authenticated()
-                        .anyRequest()
-                        .permitAll() // permitir recursos estáticos
-            )
-            .authenticationProvider(authenticationProvider());
+                .headers(h -> h
+                        .frameOptions(HeadersConfigurer.FrameOptionsConfig::deny)
+                        .xssProtection(x -> x.disable()))
+                .csrf(AbstractHttpConfigurer::disable) // desactivar CSRF para API REST
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .exceptionHandling(e -> e.authenticationEntryPoint(restEntryPoint))
+                .passwordManagement(m -> m.changePasswordPage("/auth/restore-pwd"))
+                .addFilterBefore(
+                        jwtAuthFilter,
+                        UsernamePasswordAuthenticationFilter.class)
+                .authorizeHttpRequests(
+                        auth -> auth
+                                .requestMatchers("/api/**")
+                                .permitAll() // permitir todas las API
+                                .requestMatchers("/workflow/**")
+                                .authenticated()
+                                .anyRequest()
+                                .permitAll() // permitir recursos estáticos
+                )
+                .authenticationProvider(authenticationProvider());
         return http.build();
     }
 
@@ -87,13 +83,11 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedOrigins(List.of(allowedOrigins));
         config.setAllowedMethods(
-            List.of("GET", "POST", "PUT", "DELETE", "OPTIONS")
-        );
+                List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
 
-        UrlBasedCorsConfigurationSource source =
-            new UrlBasedCorsConfigurationSource();
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
         return source;
     }
@@ -106,8 +100,7 @@ public class SecurityConfig {
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider(
-            userDetailsService
-        );
+                userDetailsService);
         provider.setPasswordEncoder(passwordEncoder());
         return provider;
     }

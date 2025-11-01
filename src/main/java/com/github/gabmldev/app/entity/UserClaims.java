@@ -1,6 +1,8 @@
 package com.github.gabmldev.app.entity;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class UserClaims {
 
-    private String id;
+    private UUID id;
     private String username;
     private String email;
     private String role;

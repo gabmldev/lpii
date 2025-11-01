@@ -7,7 +7,7 @@ import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
 @EntityScan(basePackages = "com.github.gabmldev.app.entity")
-@ComponentScan(basePackages = "com.github.gabmldev.app")
+@ComponentScan({ "controller", "services", "config" })
 public class Main {
 
     public static void main(String[] args) {
