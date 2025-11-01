@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.github.gabmldev.app.entity.User;
 import com.github.gabmldev.app.services.impl.AuthServiceImpl;
 
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -26,17 +27,18 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public void login(@RequestBody User user) {
+    public Map<String, Object> login(@RequestBody LoginBody body) {
+        return authImpl.login(body);
     }
 
     @PostMapping("/logout")
-    public void logout(@RequestBody LoginBody body) {
-        authImpl.login(body);
+    public Map<String, Object> logout(@RequestBody String body) {
+        return authImpl.logout(body);
     }
 
     @PostMapping("/sign-up")
-    public void create(@RequestBody SignUpBody body) {
-        authImpl.signUp(body);
+    public Map<String, Object> create(@RequestBody SignUpBody body) {
+        return authImpl.signUp(body);
     }
 
     @PatchMapping("/restore-pwd")

@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 import com.github.gabmldev.app.utils.*;
+import jakarta.persistence.NoResultException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -47,10 +48,18 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public Map<String, Object> login(LoginBody body) {
         try {
+
+            User user = authRepository.findByEmail(body.getEmail()).orElseThrow(() -> new UsernameNotFoundException("User not found: " + body.getEmail()));
+
+            boolean matches = passwordEncoder.matches(body.getPwd(), user.getPwd());
+
+            if (!matches) {
+                throw new NoResultException("Password not match");
+            }
+
             Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(username, pwd));
-            User user = authRepository.findByUsername(username)
-                    .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
+                    new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPwd()));
+
             UserClaims claims = new UserClaims();
 
             LocalDateTime cat = LocalDateTime.now();
@@ -66,7 +75,7 @@ public class AuthServiceImpl implements AuthService {
             Map<String, Object> customClaims = new HashMap<>();
             customClaims.put("data", claims);
 
-            String token = jwtService.generateToken(username, customClaims);
+            String token = jwtService.generateToken(user.getUsername(), customClaims);
 
             String jti = jwtService.extractJti(token);
 
@@ -87,6 +96,15 @@ public class AuthServiceImpl implements AuthService {
                         .put("reason", e.getMessage())
                         .build();
             }
+
+            if (e instanceof NoResultException) {
+                return ResponseMap.builder()
+                        .put("status", "error")
+                        .put("message", "We obtained an unexpected result in the validation.")
+                        .put("reason", e.getMessage())
+                        .build();
+            }
+
             return ResponseMap.builder()
                     .put("status", "server-error")
                     .put("message", "Something unexpected happened, please try again or try other data.")

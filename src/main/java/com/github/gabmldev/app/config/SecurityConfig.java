@@ -80,12 +80,14 @@ public class SecurityConfig {
                         UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(
                         auth -> auth
-                                .requestMatchers("/api/**")
-                                .permitAll() // permitir todas las API
-                                .requestMatchers("/workflow/**")
-                                .authenticated()
+                                .requestMatchers("/**")
+                                .hasAnyRole()
                                 .anyRequest()
-                                .permitAll() // permitir recursos estáticos
+                                .permitAll()
+                                .requestMatchers("/workshop/admin/**")
+                                .hasRole("admin")
+                                .anyRequest()
+                                .permitAll()
                 )
                 .authenticationProvider(authenticationProvider());
         return http.build();
