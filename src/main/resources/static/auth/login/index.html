@@ -14,13 +14,52 @@
       crossorigin="anonymous"
     ></script>
     <title>login</title>
+    <script>
+      document.addEventListener('htmx:configRequest', (e) => {
+          const token = document.cookie.split('; ')
+              .find(row => row.startsWith('token='))
+              ?.split('=')[1];
+
+          if (token) {
+              e.detail.headers['Authorization'] = `Bearer ${token}`;
+          }
+      });
+    </script>
   </head>
   <body>
     <main class="container grid place-items-center h-svh mx-auto py-16">
       <section class="w-sm mx-auto">
+        <script defer>
+          function login(event) {
+              const form = event.target;
+              const data = {
+                  email: form.querySelector('[x-model="email"]').value,
+                  pwd: form.querySelector('[x-model="pwd"]').value
+              };
+
+              fetch('/api/auth/login', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify(data)
+              })
+              .then(r => r.json())
+              .then(res => {
+                  if (res.status === 'authenticated') {
+                      document.cookie = `token=${res.token}; path=/; max-age=3600; SameSite=Strict`;
+                      window.location.href = '/workshop/profile';
+                      return;
+                  }
+
+                  Alpine.store('app').error = res.message || 'Error de login';
+              });
+          }
+        </script>
         <form
           hx-post="/api/auth/login"
+          hx-swap="none"
+          x-data="{ email: '', pwd: '' }"
           class="rounded-xl border-1 border-gray-300 bg-gray-400/20 py-4 px-2"
+          @submit.prevent="login($event)"
         >
           <h1 class="text-4xl text-center font-bold">Inicia Seccion</h1>
 
@@ -28,12 +67,14 @@
             <label for="email" class="flex flex-col gap-2">
               Email
               <input
+                x-model="email"
                 class="rounded-sm border-1 border-gray-300 px-2 py-1.5"
                 id="email"
                 name="email"
                 type="text"
                 value=""
                 placeholder="e@gmail.com"
+                required
               />
             </label>
             <label for="password" class="flex flex-col gap-2">
@@ -48,12 +89,14 @@
                 </a>
               </div>
               <input
+                x-model="pwd"
                 class="rounded-sm border-1 border-gray-300 px-2 py-1.5"
                 id="password"
                 name="password"
                 type="text"
                 value=""
                 placeholder="*******"
+                required
               />
             </label>
           </div>

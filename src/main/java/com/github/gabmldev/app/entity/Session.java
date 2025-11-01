@@ -31,7 +31,7 @@ public class Session {
     @Column(name = "id")
     private UUID id;
 
-    @Column(name = "tjti", nullable = false)
+    @Column(name = "jti", nullable = false)
     private String jti;
 
     @Column(name = "token", nullable = false, columnDefinition = "TEXT")
