@@ -62,6 +62,19 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .exceptionHandling(e -> e.authenticationEntryPoint(restEntryPoint))
                 .passwordManagement(m -> m.changePasswordPage("/auth/restore-pwd"))
+                .formLogin(fl ->
+                    fl.loginPage("/auth/login")
+                      .loginProcessingUrl("/api/auth/login")
+                      .defaultSuccessUrl("/workshop/profile", true)
+                      .failureUrl("/login?status='error'&errors=")
+                      .permitAll()
+                )
+                .logout(l ->
+                    l.logoutUrl("/auth/logout")
+                     .logoutSuccessUrl("/auth/logout?status=successful")
+                     .invalidateHttpSession(true)
+                     .permitAll()
+                )
                 .addFilterBefore(
                         jwtAuthFilter,
                         UsernamePasswordAuthenticationFilter.class)

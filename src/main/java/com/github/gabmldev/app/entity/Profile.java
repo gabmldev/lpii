@@ -22,6 +22,9 @@ public class Profile {
     @Column(name = "id")
     private UUID id;
 
+    @Column(name = "avatar")
+    private String avatar;
+
     @OneToMany(mappedBy = "profile")
     private List<Payment> payments;
 
